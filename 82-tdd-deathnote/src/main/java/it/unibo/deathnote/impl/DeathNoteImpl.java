@@ -22,10 +22,8 @@ public class DeathNoteImpl implements DeathNote {
      */
     @Override
     public String getRule(final int ruleNumber) {
-        if (ruleNumber > 0 && ruleNumber <= RULES.size()) {
-            return RULES.get(ruleNumber - 1);
-        }
-        throw new IllegalArgumentException();
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getRule'");
      }
 
     /**
