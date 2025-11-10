@@ -35,13 +35,10 @@ public class MiniGUI {
         canvas.setLayout(new BorderLayout());
         final JButton write = new JButton("Print a random number on standard output");
         //canvas.add(write, BorderLayout.CENTER);
-        //new panel with box layout
+        //new panel with box layout, and label
         final JPanel box = new JPanel();
-
-        //new label
-        final JLabel result = new JLabel("Result:");
+        final JLabel result = new JLabel("Result: ");
         canvas.add(result, BorderLayout.NORTH);
-
         box.setLayout(new BoxLayout(box, BoxLayout.X_AXIS));
         box.add(write);
         canvas.add(box, BorderLayout.CENTER);
@@ -54,7 +51,11 @@ public class MiniGUI {
         write.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent e) {
-                System.out.println(randomGenerator.nextInt()); // NOPMD
+                final int output = randomGenerator.nextInt();
+                System.out.println(output); // NOPMD 
+
+                //Displaying the random number
+                result.setText("Result: " + output);
             }
         });
     }
