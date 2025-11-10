@@ -64,7 +64,7 @@ class TestDeathNote {
     @Test
     void testWriteName() {
         for (final var n : List.of(names, falseNames)) {
-            assertTrue(book.isNameWritten(n.toString()));
+            assertFalse(book.isNameWritten(n.toString()));
 
             try {
                 book.writeName(n.toString());
