@@ -73,7 +73,10 @@ class TestDeathNote {
                 // non ho capito il punto '* verify that another human has not been written in the notebook'
 
                 assertFalse(book.isNameWritten(EMPTY_STRING));
-            } catch (final NullPointerException e) {
+                // CHECKSTYLE <AvoidCatchingGenericException> OFF
+                // NullPointerException required for the exercises
+            } catch (final NullPointerException e) { // NOPMD Required by the exercise
+                // CHECKSTYLE <AvoidCatchingGenericException> ON
                 assertNull(n);
             }
         }
