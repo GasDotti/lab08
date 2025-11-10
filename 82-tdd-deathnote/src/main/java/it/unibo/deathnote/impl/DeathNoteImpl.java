@@ -10,11 +10,38 @@ import java.util.List;
  */
 public class DeathNoteImpl implements DeathNote {
 
+    private final List<Object> content; 
+
     /**
      * Base constructor, it initializes an empty DeathNote.
      */
     public DeathNoteImpl() {
-        
+        this.content = new ArrayList<>();
+    }
+
+    private Object Death(final String name) {
+        class Death {
+            private String name;
+            private String cause;
+            private String details;
+            public Death(final String name) {
+                this.name = name;
+            }
+            public void setCause(final String cause) {
+                this.cause = cause;
+            }
+            public void setDetails(final String details) {
+                this.details = details;
+            }
+            @Override
+            public boolean equals(Object obj) {
+                if (this.name.equals(obj)) {
+                    return true;
+                }
+                return false;
+            }
+        }
+        return new Death(name);
     }
 
     /**
@@ -22,8 +49,10 @@ public class DeathNoteImpl implements DeathNote {
      */
     @Override
     public String getRule(final int ruleNumber) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getRule'");
+        if (ruleNumber > 0 && ruleNumber <= RULES.size()) {
+            return RULES.get(ruleNumber - 1);
+        }
+        throw new IllegalArgumentException();
      }
 
     /**
@@ -31,8 +60,11 @@ public class DeathNoteImpl implements DeathNote {
      */
     @Override
     public void writeName(final String name) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'writeDeathName'");
+
+        if (name.equals(null) && name.isEmpty()) {
+            throw new NullPointerException();
+        }
+        content.add(Death(name));        
     }
 
     /**
@@ -76,7 +108,25 @@ public class DeathNoteImpl implements DeathNote {
      */
     @Override
     public boolean isNameWritten(final String name) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'isNameWritten'");
+        for (Object d : this.content) {
+            if (d.equals(name)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override 
+    public String toString() {
+        String output = "";
+
+        for (final var s : this.content) {
+            
+        }
+
+        return output;
     }
 }
