@@ -2,6 +2,7 @@ package it.unibo.deathnote.impl;
 
 import it.unibo.deathnote.api.DeathNote;
 
+import java.text.RuleBasedCollator;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,9 +25,11 @@ public class DeathNoteImpl implements DeathNote {
      */
     @Override
     public String getRule(final int ruleNumber) {
-        //TODO
+        if (ruleNumber > 0 && ruleNumber < RULES.size()) {
+            return RULES.get(ruleNumber - 1);
+        }
         throw new IllegalArgumentException();
-    }
+     }
 
     /**
      * {@inheritDoc}
