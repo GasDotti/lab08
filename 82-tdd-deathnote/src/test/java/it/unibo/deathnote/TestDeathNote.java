@@ -24,6 +24,7 @@ class TestDeathNote {
     private List<String> names;
     // List with a null element.
     private List<Object> falseNames;
+    private long writingNameAtTime;
 
     /**
      * Configuration for the tests.
@@ -71,7 +72,9 @@ class TestDeathNote {
                 book.writeName(n.toString());
                 assertTrue(book.isNameWritten(n.toString()));
 
-                // non ho capito il punto '* verify that another human has not been written in the notebook'
+                // Checks that no other name was written in the meantime
+                List<Object> content = DeathNoteImpl.getContentOf((DeathNoteImpl)book);
+                assertEquals(n, content.getLast());
 
                 assertFalse(book.isNameWritten(EMPTY_STRING));
                 // CHECKSTYLE <AvoidCatchingGenericException> OFF
@@ -81,6 +84,16 @@ class TestDeathNote {
 
                 assertNull(n);
             }
+        }
+    }
+
+    @Test
+    void testWrtingCause() {
+        for (final String n : names) {
+            book.writeName(n);
+            writingNameAtTime = System.currentTimeMillis();
+
+
         }
     }
 }
