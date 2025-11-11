@@ -33,6 +33,7 @@ class TestDeathNote {
         book = new DeathNoteImpl();
         names = new ArrayList<>();
         names.addAll(List.of("pippo", "pluto", "paperino", "giorgia", ""));
+        // falseNames = { null };
         falseNames = new ArrayList<>();
     }
 
@@ -77,6 +78,7 @@ class TestDeathNote {
                 // NullPointerException required for the exercises
             } catch (final NullPointerException e) { // NOPMD Required by the exercise
                 // CHECKSTYLE <AvoidCatchingGenericException> ON
+
                 assertNull(n);
             }
         }

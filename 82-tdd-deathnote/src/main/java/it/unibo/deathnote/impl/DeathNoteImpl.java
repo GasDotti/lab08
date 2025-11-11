@@ -19,31 +19,6 @@ public class DeathNoteImpl implements DeathNote {
         this.content = new ArrayList<>();
     }
 
-    private Object Death(final String name) {
-        class Death {
-            private String name;
-            private String cause;
-            private String details;
-            public Death(final String name) {
-                this.name = name;
-            }
-            public void setCause(final String cause) {
-                this.cause = cause;
-            }
-            public void setDetails(final String details) {
-                this.details = details;
-            }
-            @Override
-            public boolean equals(Object obj) {
-                if (this.name.equals(obj)) {
-                    return true;
-                }
-                return false;
-            }
-        }
-        return new Death(name);
-    }
-
     /**
      * {@inheritDoc}
      */
@@ -61,10 +36,10 @@ public class DeathNoteImpl implements DeathNote {
     @Override
     public void writeName(final String name) {
 
-        if (name.equals(null) && name.isEmpty()) {
-            throw new NullPointerException();
+        if (name == null || name.isEmpty()) {
+            throw new NullPointerException(); // NOPMD Required by the exercise
         }
-        content.add(Death(name));        
+        content.add(new Death(name));
     }
 
     /**
@@ -108,7 +83,7 @@ public class DeathNoteImpl implements DeathNote {
      */
     @Override
     public boolean isNameWritten(final String name) {
-        for (Object d : this.content) {
+        for (final Object d : this.content) {
             if (d.equals(name)) {
                 return true;
             }
@@ -124,9 +99,46 @@ public class DeathNoteImpl implements DeathNote {
         String output = "";
 
         for (final var s : this.content) {
-            
+            output = output.concat(s.toString());
         }
 
         return output;
+    }
+
+    private class Death {
+        private final String name;
+        private String cause;
+        private String details;
+
+        Death(final String name) {
+            this.name = name;
+        }
+
+        void setCause(final String cause) {
+            this.cause = cause;
+        }
+
+        void setDetails(final String details) {
+            this.details = details;
+        }
+
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result + ((name == null) ? 0 : name.hashCode());
+
+            return result;
+        }
+
+        @Override
+        public boolean equals(final Object obj) {
+            return obj != null && this.name.equals(obj.toString());
+        }
+
+        @Override
+        public String toString() {
+            return this.name.concat(" ") + this.cause.concat(" ") + this.details.concat(".");
+        }
     }
 }
