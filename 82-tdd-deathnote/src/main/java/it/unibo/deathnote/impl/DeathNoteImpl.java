@@ -20,6 +20,13 @@ public class DeathNoteImpl implements DeathNote {
     }
 
     /**
+     * @return the List of Deaths written in the book.
+     */
+    public static List<Object> getContentOf(DeathNoteImpl book) {
+        return book.content;
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override
