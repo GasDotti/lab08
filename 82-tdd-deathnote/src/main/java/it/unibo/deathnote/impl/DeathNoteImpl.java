@@ -46,7 +46,9 @@ public class DeathNoteImpl implements DeathNote {
         if (name == null || name.isEmpty()) {
             throw new NullPointerException(); // NOPMD Required by the exercise
         }
-        content.add(new Death(name));
+        if(!this.isNameWritten(name)) {
+            content.add(new Death(name));
+        }
     }
 
     /**
