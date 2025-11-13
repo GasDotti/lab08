@@ -23,7 +23,7 @@ class TestDeathNote {
 
     private DeathNote book = new DeathNoteImpl();
 
-    private final int[] falseRules = {0, DeathNote.RULES.size() + 1};
+    private final int[] illegalRules = {0, DeathNote.RULES.size() + 1};
     private final List<String> names = new ArrayList<>();
 
     /**
@@ -44,7 +44,7 @@ class TestDeathNote {
         names.add((String) null);
 
         // Testing illegal arguments.
-        for (final int i : falseRules) {
+        for (final int i : illegalRules) {
             try {
                 book.getRule(i);
             } catch (final IllegalArgumentException e) {
@@ -150,7 +150,7 @@ class TestDeathNote {
         // Test di mancata scrittura dei Details.
         book.writeName("Last_Name");
         writingNameAtTime = System.currentTimeMillis();
-        Thread.sleep(DeathNoteImpl.DETAILS_LIMIT);
+        Thread.sleep(DeathNoteImpl.DETAILS_LIMIT + 1);
         assertTrue(System.currentTimeMillis() - writingNameAtTime > DeathNoteImpl.DETAILS_LIMIT);
         assertFalse(book.writeDetails(details));
     }
