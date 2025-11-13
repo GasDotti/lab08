@@ -13,17 +13,21 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.deathnote.api.DeathNote;
 import it.unibo.deathnote.impl.DeathNoteImpl;
 
 class TestDeathNote {
 
     private static final String EMPTY_STRING = "";
-    private DeathNote book;
+    private static final String BASE_CAUSE = "Heart Attack";
+    private static final int MAX_MILLIS = 40;
+
+    private DeathNote book = new DeathNoteImpl();
+
     private final int[] falseRules = {0, DeathNote.RULES.size() + 1};
-    private List<String> names;
-    // List with a null element.
-    private List<Object> falseNames;
+    private final List<String> names = new ArrayList<>();
+
     private long writingNameAtTime;
 
     /**
@@ -32,10 +36,9 @@ class TestDeathNote {
     @BeforeEach
     void setup() {
         book = new DeathNoteImpl();
-        names = new ArrayList<>();
-        names.addAll(List.of("pippo", "pluto", "paperino", "giorgia", ""));
+        names.addAll(List.of("pippo", "pluto", "paperino", "giorgia"));
+        names.add((String) null);
         // falseNames = { null };
-        falseNames = new ArrayList<>();
     }
 
     /**
@@ -64,23 +67,23 @@ class TestDeathNote {
      * Tries the correct functioning for the action of "writing a name".
      */
     @Test
+    @SuppressFBWarnings(
+        value = "DCN_NULLPOINTER_EXCEPTION", 
+        justification = "Catch required by the exercise"
+        )
     void testWriteName() {
-        for (final var n : List.of(names, falseNames)) {
-            assertFalse(book.isNameWritten(n.toString()));
+        for (final String n : names) {
+            assertFalse(book.isNameWritten(n));
 
             try {
-                book.writeName(n.toString());
-                assertTrue(book.isNameWritten(n.toString()));
+                book.writeName(n);
+                assertTrue(book.isNameWritten(n));
 
-                // Checks that no other name was written in the meantime
-                List<Object> content = DeathNoteImpl.getContentOf((DeathNoteImpl)book);
-                assertEquals(n, content.getLast());
+                if (EMPTY_STRING.equals(n)) {
+                    assertFalse(book.isNameWritten(EMPTY_STRING));
+                }
 
-                assertFalse(book.isNameWritten(EMPTY_STRING));
-                // CHECKSTYLE <AvoidCatchingGenericException> OFF
-                // NullPointerException required for the exercises
             } catch (final NullPointerException e) { // NOPMD Required by the exercise
-                // CHECKSTYLE <AvoidCatchingGenericException> ON
 
                 assertNull(n);
             }
@@ -88,12 +91,35 @@ class TestDeathNote {
     }
 
     @Test
-    void testWrtingCause() {
+    void testWrtingCause() throws InterruptedException {
+        // Asserts the book is empty
+        assertEquals(DeathNoteImpl.getContentOf((DeathNoteImpl) book), new ArrayList<>());
+        String cause = "Karting accident";
+
+        try {
+            assertFalse(book.writeDeathCause("Throw Exception"), "The Exception wasn't thrown.");
+        } catch (final IllegalStateException e) {
+            assertEquals(e.getClass(), IllegalStateException.class);
+        }
+
         for (final String n : names) {
             book.writeName(n);
             writingNameAtTime = System.currentTimeMillis();
 
+            if (names.indexOf(n) % 2 == 0) {
+                Thread.sleep(100);
 
+                assertTrue(System.currentTimeMillis() - writingNameAtTime > MAX_MILLIS);
+                assertFalse(book.writeDeathCause(cause));
+                assertEquals(book.getDeathCause(n), BASE_CAUSE);
+            } else {
+                assertTrue(System.currentTimeMillis() - writingNameAtTime < MAX_MILLIS);
+
+                assertTrue(book.writeDeathCause(cause));
+                cause = "Changing cause";
+                assertFalse(book.writeDeathCause(cause));
+                assertNotEquals(book.getDeathCause(n), cause);
+            }
         }
     }
 }
