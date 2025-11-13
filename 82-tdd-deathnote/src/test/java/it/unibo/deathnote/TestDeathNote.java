@@ -28,8 +28,6 @@ class TestDeathNote {
     private final int[] falseRules = {0, DeathNote.RULES.size() + 1};
     private final List<String> names = new ArrayList<>();
 
-    private long writingNameAtTime;
-
     /**
      * Configuration for the tests.
      */
@@ -94,7 +92,6 @@ class TestDeathNote {
     void testWrtingCause() throws InterruptedException {
         // Asserts the book is empty
         assertEquals(DeathNoteImpl.getContentOf((DeathNoteImpl) book), new ArrayList<>());
-        String cause = "Karting accident";
 
         try {
             assertFalse(book.writeDeathCause("Throw Exception"), "The Exception wasn't thrown.");
@@ -103,8 +100,10 @@ class TestDeathNote {
         }
 
         for (final String n : names) {
+            String cause = "karting accident";
+
             book.writeName(n);
-            writingNameAtTime = System.currentTimeMillis();
+            long writingNameAtTime = System.currentTimeMillis();
 
             if (names.indexOf(n) % 2 == 0) {
                 Thread.sleep(100);
@@ -116,10 +115,46 @@ class TestDeathNote {
                 assertTrue(System.currentTimeMillis() - writingNameAtTime < MAX_MILLIS);
 
                 assertTrue(book.writeDeathCause(cause));
-                cause = "Changing cause";
+                cause = "changing cause";
                 assertFalse(book.writeDeathCause(cause));
                 assertNotEquals(book.getDeathCause(n), cause);
             }
         }
+    }
+
+    @Test
+    void testDetails() throws InterruptedException {
+        assertEquals(DeathNoteImpl.getContentOf((DeathNoteImpl) book), new ArrayList<>());
+        String details = "ran for too long";
+        long writingNameAtTime;
+
+        try {
+            book.writeDetails("Throw Exception");
+        } catch (final IllegalStateException e) {
+            assertEquals(e.getClass(), IllegalStateException.class);
+        }
+
+        for (final String n : names) {
+            book.writeName(n);
+            writingNameAtTime = System.currentTimeMillis();
+
+            // Test di corretto funzionamento dei Details.
+            assertEquals(EMPTY_STRING, book.getDeathDetails(n));
+            assertTrue(System.currentTimeMillis() - writingNameAtTime < MAX_MILLIS);
+            assertTrue(book.writeDetails(details));
+            assertEquals(details, book.getDeathDetails(n));
+
+            // Controllo che non si possa modificare il contenuto.
+            details = "change details";
+            assertFalse(book.writeDetails(details));
+            assertNotEquals(details, book.getDeathDetails(n));
+        }
+
+        // Test di mancata scrittura dei Details.
+        book.writeName("Last_Name");
+        writingNameAtTime = System.currentTimeMillis();
+        Thread.sleep(6000);
+        assertTrue(System.currentTimeMillis() - writingNameAtTime > MAX_MILLIS);
+        assertFalse(book.writeDetails(details));
     }
 }
