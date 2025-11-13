@@ -20,7 +20,6 @@ import it.unibo.deathnote.impl.DeathNoteImpl;
 class TestDeathNote {
 
     private static final String EMPTY_STRING = "";
-    private static final int MAX_MILLIS = 40;
 
     private DeathNote book = new DeathNoteImpl();
 
@@ -106,11 +105,11 @@ class TestDeathNote {
             if (names.indexOf(n) % 2 == 0) {
                 Thread.sleep(DeathNoteImpl.CAUSE_LIMIT);
 
-                assertTrue(System.currentTimeMillis() - writingNameAtTime > MAX_MILLIS);
+                assertTrue(System.currentTimeMillis() - writingNameAtTime > DeathNoteImpl.CAUSE_LIMIT);
                 assertFalse(book.writeDeathCause(cause));
                 assertEquals(DeathNoteImpl.BASE_CAUSE, book.getDeathCause(n));
             } else {
-                assertTrue(System.currentTimeMillis() - writingNameAtTime < MAX_MILLIS);
+                assertTrue(System.currentTimeMillis() - writingNameAtTime < DeathNoteImpl.CAUSE_LIMIT);
 
                 assertTrue(book.writeDeathCause(cause));
                 cause = "changing cause";
@@ -138,7 +137,7 @@ class TestDeathNote {
 
             // Test di corretto funzionamento dei Details.
             assertEquals(EMPTY_STRING, book.getDeathDetails(n));
-            assertTrue(System.currentTimeMillis() - writingNameAtTime < MAX_MILLIS);
+            assertTrue(System.currentTimeMillis() - writingNameAtTime < DeathNoteImpl.DETAILS_LIMIT);
             assertTrue(book.writeDetails(details));
             assertEquals(details, book.getDeathDetails(n));
 
@@ -152,7 +151,7 @@ class TestDeathNote {
         book.writeName("Last_Name");
         writingNameAtTime = System.currentTimeMillis();
         Thread.sleep(DeathNoteImpl.DETAILS_LIMIT);
-        assertTrue(System.currentTimeMillis() - writingNameAtTime > MAX_MILLIS);
+        assertTrue(System.currentTimeMillis() - writingNameAtTime > DeathNoteImpl.DETAILS_LIMIT);
         assertFalse(book.writeDetails(details));
     }
 }

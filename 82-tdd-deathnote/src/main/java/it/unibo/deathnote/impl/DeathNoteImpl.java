@@ -11,7 +11,7 @@ import java.util.List;
 public class DeathNoteImpl implements DeathNote {
 
     public static final int CAUSE_LIMIT = 40;
-    public static final int DETAILS_LIMIT = 6000;
+    public static final int DETAILS_LIMIT = 6040;
     public static final String BASE_CAUSE = "heart Attack";
     private final List<Object> content;
     private long writingTimer;
@@ -85,8 +85,22 @@ public class DeathNoteImpl implements DeathNote {
      */
     @Override
     public boolean writeDetails(final String details) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'writeDetails'");
+        if (this.content.isEmpty()) {
+            throw new IllegalStateException();
+        }
+        if (
+            System.currentTimeMillis() - writingTimer < DETAILS_LIMIT 
+            &&
+            Death.getDetails((Death) this.content.get(this.content.size() - 1)).isEmpty()
+            ) {
+            Death.setDetails((Death) this.content.getLast(), details);
+
+            return true;
+        } else {
+            Death.setDetails((Death) this.content.getLast(), "no");
+        }
+
+        return false;
     }
 
     /**
@@ -166,7 +180,7 @@ public class DeathNoteImpl implements DeathNote {
         }
 
         public static String getDetails(final Death d) {
-            return d.cause;
+            return d.details;
         }
 
         @Override
