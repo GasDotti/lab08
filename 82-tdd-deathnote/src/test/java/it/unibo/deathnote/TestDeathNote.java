@@ -34,8 +34,6 @@ class TestDeathNote {
     void setup() {
         book = new DeathNoteImpl();
         names.addAll(List.of("pippo", "pluto", "paperino", "giorgia"));
-        names.add((String) null);
-        // falseNames = { null };
     }
 
     /**
@@ -44,6 +42,7 @@ class TestDeathNote {
     @Test
     void testRule() {
         final int validRule = 1;
+        names.add((String) null);
 
         // Testing illegal arguments.
         for (final int i : falseRules) {
