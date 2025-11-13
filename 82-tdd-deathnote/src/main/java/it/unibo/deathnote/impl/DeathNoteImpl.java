@@ -10,7 +10,11 @@ import java.util.List;
  */
 public class DeathNoteImpl implements DeathNote {
 
-    private final List<Object> content; 
+    public static final int CAUSE_LIMIT = 40;
+    public static final int DETAILS_LIMIT = 6000;
+    public static final String BASE_CAUSE = "heart Attack";
+    private final List<Object> content;
+    private long writingTimer;
 
     /**
      * Base constructor, it initializes an empty DeathNote.
@@ -20,10 +24,11 @@ public class DeathNoteImpl implements DeathNote {
     }
 
     /**
+     * @param book a DeathNoteImpl with content.
      * @return the List of Deaths written in the book.
      */
-    public static List<Object> getContentOf(DeathNoteImpl book) {
-        return book.content;
+    public static List<Object> getContentOf(final DeathNoteImpl book) {
+        return List.copyOf(book.content);
     }
 
     /**
@@ -46,8 +51,9 @@ public class DeathNoteImpl implements DeathNote {
         if (name == null || name.isEmpty()) {
             throw new NullPointerException(); // NOPMD Required by the exercise
         }
-        if(!this.isNameWritten(name)) {
+        if (!this.isNameWritten(name)) {
             content.add(new Death(name));
+            writingTimer = System.currentTimeMillis();
         }
     }
 
@@ -56,8 +62,22 @@ public class DeathNoteImpl implements DeathNote {
      */
     @Override
     public boolean writeDeathCause(final String cause) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'writeDeathCause'");
+        if (this.content.isEmpty()) {
+            throw new IllegalStateException();
+        }
+        if (
+            System.currentTimeMillis() - writingTimer < CAUSE_LIMIT 
+            &&
+            Death.getCause((Death) this.content.get(this.content.size() - 1)).isEmpty()
+            ) {
+            Death.setCause((Death) this.content.getLast(), cause);
+
+            return true;
+        } else {
+            Death.setCause((Death) this.content.getLast(), BASE_CAUSE);
+        }
+
+        return false;
     }
 
     /**
@@ -74,8 +94,12 @@ public class DeathNoteImpl implements DeathNote {
      */
     @Override
     public String getDeathCause(final String name) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getDeathCause'");
+        for (final var d : this.content) {
+            if (d.equals(name)) {
+                return Death.getCause((Death) d);
+            }
+        }
+        throw new IllegalArgumentException();
     }
 
     /**
@@ -83,8 +107,12 @@ public class DeathNoteImpl implements DeathNote {
      */
     @Override
     public String getDeathDetails(final String name) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getDeathDetails'");
+        for (final var d : this.content) {
+            if (d.equals(name)) {
+                return Death.getDetails((Death) d);
+            }
+        }
+        throw new IllegalArgumentException();
     }
 
     /**
@@ -121,14 +149,24 @@ public class DeathNoteImpl implements DeathNote {
 
         Death(final String name) {
             this.name = name;
+            this.cause = "";
+            this.details = "";
         }
 
-        void setCause(final String cause) {
-            this.cause = cause;
+        static void setCause(final Death d, final String cause) {
+            d.cause = cause;
         }
 
-        void setDetails(final String details) {
-            this.details = details;
+        static void setDetails(final Death d, final String details) {
+            d.details = details;
+        }
+
+        public static String getCause(final Death d) {
+            return d.cause;
+        }
+
+        public static String getDetails(final Death d) {
+            return d.cause;
         }
 
         @Override
